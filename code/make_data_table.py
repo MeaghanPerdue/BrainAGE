@@ -3,8 +3,8 @@
 import pandas as pd
 
 #read participant info (rows 1:6 in brainAGE template)
-males=pd.read_csv('/Users/meaghan/Projects/BrainAge/data/brainAGE_elgan_males.csv')
-females=pd.read_csv('/Users/meaghan/Projects/BrainAge/data/brainAGE_elgan_females.csv')
+males=pd.read_csv('/Users/meaghan/Projects/BrainAge/data/brainAGE_ping_males.csv')
+females=pd.read_csv('/Users/meaghan/Projects/BrainAge/data/brainAGE_ping_females.csv')
 
 #read aparc and aseg table outputs from freesurfer
 lhthickness=pd.read_csv('/Users/meaghan/Projects/BrainAge/data/lh_aparc_stats_thickness.csv')
@@ -43,5 +43,5 @@ malesdat.columns=cols2
 femalesdat.columns=cols2
 
 # write outputs to csv
-malesdat.to_csv('/Users/meaghan/Projects/BrainAge/data/brainAGE_elgan_males_data.csv', index=False)
-femalesdat.to_csv('/Users/meaghan/Projects/BrainAge/data/brainAGE_elgan_females_data.csv', index=False)
+malesdat.to_csv('/Users/meaghan/Projects/BrainAge/data/brainAGE_ping_males_data.csv', index=False)
+femalesdat.to_csv('/Users/meaghan/Projects/BrainAge/data/brainAGE_ping_females_data.csv', index=False)

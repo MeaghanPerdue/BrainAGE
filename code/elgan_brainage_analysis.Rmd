@@ -1,0 +1,172 @@
+---
+title: "ELGAN BrainAGE Analysis"
+output: html_notebook
+---
+14 March 2025
+
+Data visualization and analysis of ELGAN BrainAGE Prediction data
+
+# Load packages and data
+```{r}
+library(tidyverse)
+
+output<- read.csv('/Users/meaghan/Projects/BrainAge/results/elgan_brainAGE_outputs_20250314.csv')
+demo<-read.csv('/Users/meaghan/Projects/BrainAge/data/elgan_demos.csv')
+colnames(demo)[2]<-"SubjectID"
+
+demo<- demo %>%
+            select(c("sid", "SubjectID", "female", "gadays", "bw"))
+
+dat<-left_join(output, demo, by="SubjectID")
+
+write.csv(dat,'/Users/meaghan/Projects/BrainAge/data/elgan_brainAGE_data_20250314.csv', row.names = FALSE)
+
+
+
+```
+
+# Visualize summary data
+```{r}
+library(patchwork)
+
+plot.age<- ggplot(aes(sex, age), data=dat) +
+      geom_violin(aes(colour = sex, fill=sex, alpha=.5)) +
+      geom_point() + 
+      scale_y_continuous(limits=c(13,25), breaks=seq(13,25,2)) +
+      theme_classic()
+
+plot.pred_age<-ggplot(aes(sex, predicted_age), data=dat) +
+      geom_violin(aes(colour = sex, fill=sex, alpha=.5)) +
+      geom_point() + 
+      scale_y_continuous(limits=c(13,25), breaks=seq(13,25,2)) +
+      theme_classic()
+
+
+plot.pred_ageadj<-ggplot(aes(sex, predicted_age_adj), data=dat) +
+      geom_violin(aes(colour = sex, fill=sex, alpha=.5)) +
+      geom_point() + 
+      scale_y_continuous(limits=c(13,25), breaks=seq(13,25,2)) +
+      theme_classic()
+
+
+plot.brainage<-ggplot(aes(sex, brainage_dif), data=dat) +
+      geom_violin(aes(colour = sex, fill=sex, alpha=.5)) +
+      geom_point() + 
+      scale_y_continuous(limits=c(-2, 10), breaks=seq(-2,10,2)) +
+      theme_classic()
+
+
+plot.brainageadj<-ggplot(aes(sex, brainage_dif_adj), data=dat) +
+      geom_violin(aes(colour = sex, fill=sex, alpha=.5)) +
+      geom_point() + 
+      scale_y_continuous(limits=c(-2, 10), breaks=seq(-2,10,2)) +
+      theme_classic()
+
+
+summary <- plot.age + plot.pred_age + plot.pred_ageadj + plot.brainage + plot.brainageadj + plot_layout(guides='collect')
+
+# Summary stats
+summarise_at(dat, vars(brainage_dif, brainage_dif_adj), list(mean = mean, sd = sd))
+
+dat %>%
+  group_by(sex) %>%
+  summarise_at(vars(brainage_dif, brainage_dif_adj), list(mean = mean, sd = sd))
+
+
+```
+
+# BrainAGE correlations with Age, Gestational Age, and birth weight
+```{r}
+library(patchwork)
+
+# Chronological age
+plot.age_predage<-ggplot(aes(age, predicted_age), data=dat) + 
+                      geom_point(aes(color=sex)) +
+                      geom_smooth(method=lm, se=FALSE, size=.5, aes(color=sex)) +
+                      geom_smooth(method=lm, se=FALSE, color="black") +
+                      scale_x_continuous(limits=c(14.5,16.5), breaks=seq(14.5,17.5,.5)) +
+                      scale_y_continuous(limits=c(13,25), breaks=seq(13,25,2)) +
+                      xlab("Chronological Age (y)") +
+                      ylab("Predicted Age (y)") +
+                      theme_classic()
+
+
+plot.age_brainagedif<-ggplot(aes(age, brainage_dif), data=dat) + 
+                      geom_point(aes(color=sex)) +
+                      geom_smooth(method=lm, se=FALSE, size=.5, aes(color=sex)) +
+                      geom_smooth(method=lm, se=FALSE, color="black") +
+                      scale_x_continuous(limits=c(14.5,16.5), breaks=seq(14.5,17.5,.5)) +
+                      scale_y_continuous(limits=c(-2, 10), breaks=seq(-2,10,2)) +
+                      xlab("Chronological Age (y)") +
+                      ylab("Brain Age Difference (y)") +
+                      theme_classic()
+
+plots_chron_age<- plot.age_predage + plot.age_brainagedif + plot_layout(guides='collect')
+
+
+# Gestational age
+plot.ga_predage<-ggplot(aes(gadays, predicted_age), data=dat) + 
+                      geom_point(aes(color=sex)) +
+                      geom_smooth(method=lm, se=FALSE, size=.5, aes(color=sex)) +
+                      geom_smooth(method=lm, se=FALSE, color="black") +
+                      scale_x_continuous(limits=c(160,200), breaks=seq(160,200,5)) +
+                      scale_y_continuous(limits=c(13,25), breaks=seq(13,25,2)) +
+                      xlab("Gestational Age (d)") +
+                      ylab("Predicted Age (y)") +
+                      theme_classic()
+
+
+plot.ga_brainagedif<-ggplot(aes(gadays, brainage_dif), data=dat) + 
+                      geom_point(aes(color=sex)) +
+                      geom_smooth(method=lm, se=FALSE, size=.5, aes(color=sex)) +
+                      geom_smooth(method=lm, se=FALSE, color="black") +
+                      scale_x_continuous(limits=c(160,200), breaks=seq(160,200,5)) +
+                      scale_y_continuous(limits=c(-2, 10), breaks=seq(-2,10,2)) +
+                      xlab("Gestational Age (d)") +
+                      ylab("Brain Age Difference (y)") +
+                      theme_classic()
+
+# Also look at absolute value of brain age dif
+plot.ga_brainagedifabs<-ggplot(aes(gadays, abs(brainage_dif)), data=dat) + 
+                      geom_point(aes(color=sex)) +
+                      geom_smooth(method=lm, se=FALSE, size=.5, aes(color=sex)) +
+                      geom_smooth(method=lm, se=FALSE, color="black") +
+                      scale_x_continuous(limits=c(160,200), breaks=seq(160,200,5)) +
+                      scale_y_continuous(limits=c(-2, 10), breaks=seq(-2,10,2)) +
+                      xlab("Gestational Age (d)") +
+                      ylab("Absolute Brain Age Difference (y)") +
+                      theme_classic()
+plots_gest_age<- plot.ga_predage + plot.ga_brainagedif + plot.ga_brainagedifabs + plot_layout(guides='collect')
+
+# Birth weight
+plot.bw_predictedage<-ggplot(aes(bw, predicted_age), data=dat) + 
+                      geom_point(aes(color=sex)) +
+                      geom_smooth(method=lm, se=FALSE, size=.5, aes(color=sex)) +
+                      geom_smooth(method=lm, se=FALSE, color="black") +
+                      xlab("Birth Weight (g)") +
+                      ylab("Predicted Age (y)") +
+                      scale_y_continuous(limits=c(13,25), breaks=seq(13,25,2)) +
+                      theme_classic()
+
+
+plot.bw_brainagedif<-ggplot(aes(bw, brainage_dif), data=dat) + 
+                      geom_point(aes(color=sex)) +
+                      geom_smooth(method=lm, se=FALSE, size=.5, aes(color=sex)) +
+                      geom_smooth(method=lm, se=FALSE, color="black") +
+                      xlab("Birth Weight (g)") +
+                      ylab("Brain Age Difference (y)") +
+                      scale_y_continuous(limits=c(-2, 10), breaks=seq(-2,10,2)) +
+                      theme_classic()
+
+plot.bw_brainagedifabs<-ggplot(aes(bw, abs(brainage_dif)), data=dat) + 
+                      geom_point(aes(color=sex)) +
+                      geom_smooth(method=lm, se=FALSE, size=.5, aes(color=sex)) +
+                      geom_smooth(method=lm, se=FALSE, color="black") +
+                      xlab("Birth Weight (g)") +
+                      ylab("Brain Age Difference (y)") +
+                      scale_y_continuous(limits=c(-2, 10), breaks=seq(-2,10,2)) +
+                      theme_classic()
+
+plots_bw <- plot.bw_predictedage + plot.bw_brainagedif + plot.bw_brainagedifabs + plot_layout(guides='collect')
+
+```
