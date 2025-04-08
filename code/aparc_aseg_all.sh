@@ -2,11 +2,12 @@
 # aparcstats2table for BrainAge prediction
 # must run using python2 environment
 # conda activate freesurfer6
+# edit SUBJECTS_DIR, OUT and subs.txt for the relevant dataset
 
 export SUBJECTS_DIR=/Users/meaghan/Projects/BrainAge/subjects
 export OUT=/Users/meaghan/Projects/BrainAge/data
 
-
+#DK atlas
 aparcstats2table --subjectsfile=subs.txt \
 --hemi=lh \
 -m area \

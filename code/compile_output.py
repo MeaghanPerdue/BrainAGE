@@ -1,22 +1,24 @@
 # Compile BrainAGE outputs into database for analysis
+# BrainAGE outputs are downloaded as separate .csv files
+# point paths to the outputs and pull into a data file for analysis
 import pandas as pd
 
 # Read compiled data with freesurfer aparc and aseg values
-maledat=pd.read_csv('/Users/meaghan/Projects/BrainAge/data/brainAGE_elgan_males_data.csv')
-femaledat=pd.read_csv('/Users/meaghan/Projects/BrainAge/data/brainAGE_elgan_females_data.csv')
+maledat=pd.read_csv('/Users/meaghan/Projects/BrainAge/data/ping_brainAGE_Global_inputs/brainAGE_ping_males_data_FS6.csv')
+femaledat=pd.read_csv('/Users/meaghan/Projects/BrainAge/data/ping_brainAGE_Global_inputs/brainAGE_ping_females_data_FS6.csv')
 
 # Read brainAGE outputs
 ##males
-maleBrainAge=pd.read_csv('/Users/meaghan/Projects/BrainAge/results/output_file_2025-03-13-19-36-01_BrainAGE_male.csv')
-maleBrainAgeAdj=pd.read_csv('/Users/meaghan/Projects/BrainAge/results/output_file_2025-03-13-19-36-01_Adjusted_BrainAGE_male.csv')
-malePredAge=pd.read_csv('/Users/meaghan/Projects/BrainAge/results/output_file_2025-03-13-19-36-01_MR_predicted_age_male.csv')
-malePredAgeAdj=pd.read_csv('/Users/meaghan/Projects/BrainAge/results/output_file_2025-03-13-19-36-01_Adjusted_MR_predicted_age_male.csv')
+maleBrainAge=pd.read_csv('/Users/meaghan/Downloads/output_file_2025-03-26-16-32-47_BrainAGE_male.csv')
+maleBrainAgeAdj=pd.read_csv('/Users/meaghan/Downloads/output_file_2025-03-26-16-32-47_Adjusted_BrainAGE_male.csv')
+malePredAge=pd.read_csv('/Users/meaghan/Downloads/output_file_2025-03-26-16-32-47_MR_predicted_age_male.csv')
+malePredAgeAdj=pd.read_csv('/Users/meaghan/Downloads/output_file_2025-03-26-16-32-47_Adjusted_MR_predicted_age_male.csv')
 
 ##females
-femaleBrainAge=pd.read_csv('/Users/meaghan/Projects/BrainAge/results/output_file_2025-03-13-19-46-01_BrainAGE_female.csv')
-femaleBrainAgeAdj=pd.read_csv('/Users/meaghan/Projects/BrainAge/results/output_file_2025-03-13-19-46-01_Adjusted_BrainAGE_female.csv')
-femalePredAge=pd.read_csv('/Users/meaghan/Projects/BrainAge/results/output_file_2025-03-13-19-46-01_MR_predicted_age_female.csv')
-femalePredAgeAdj=pd.read_csv('/Users/meaghan/Projects/BrainAge/results/output_file_2025-03-13-19-46-01_Adjusted_MR_predicted_age_female.csv')
+femaleBrainAge=pd.read_csv('/Users/meaghan/Downloads/output_file_2025-03-26-16-29-21_BrainAGE_female.csv')
+femaleBrainAgeAdj=pd.read_csv('/Users/meaghan/Downloads/output_file_2025-03-26-16-29-21_Adjusted_BrainAGE_female.csv')
+femalePredAge=pd.read_csv('/Users/meaghan/Downloads/output_file_2025-03-26-16-29-21_MR_predicted_age_female.csv')
+femalePredAgeAdj=pd.read_csv('/Users/meaghan/Downloads/output_file_2025-03-26-16-29-21_Adjusted_MR_predicted_age_female.csv')
 
 # Rename brainAGE output variables
 ##males
@@ -46,4 +48,4 @@ female_out = female_out.drop("Unnamed: 0", axis=1)
 all_out = male_out.append(female_out)
 
 # Write to .csv
-all_out.to_csv('/Users/meaghan/Projects/BrainAge/results/elgan_brainAGE_outputs_20250314.csv', index=False)
+all_out.to_csv('/Users/meaghan/Projects/BrainAge/results/ping_brainAGE_Global_outputs/ping_FS6_brainAGE_outputs_20250326.csv', index=False)

@@ -10,16 +10,25 @@ Data visualization and analysis of ELGAN BrainAGE Prediction data
 ```{r}
 library(tidyverse)
 
-output<- read.csv('/Users/meaghan/Projects/BrainAge/results/elgan_brainAGE_outputs_20250314.csv')
-demo<-read.csv('/Users/meaghan/Projects/BrainAge/data/elgan_demos.csv')
-colnames(demo)[2]<-"SubjectID"
+#ELGAN
+#output<- read.csv('/Users/meaghan/Projects/BrainAge/results/elgan_brainAGE_outputs_20250314.csv')
+#demo<-read.csv('/Users/meaghan/Projects/BrainAge/data/elgan_demos.csv')
+#colnames(demo)[2]<-"SubjectID"
 
-demo<- demo %>%
-            select(c("sid", "SubjectID", "female", "gadays", "bw"))
+#demo<- demo %>%
+#            select(c("sid", "SubjectID", "female", "gadays", "bw"))
 
-dat<-left_join(output, demo, by="SubjectID")
+#dat<-left_join(output, demo, by="SubjectID")
 
-write.csv(dat,'/Users/meaghan/Projects/BrainAge/data/elgan_brainAGE_data_20250314.csv', row.names = FALSE)
+# remove poor quality Freesurfer subs (E1600521B_01, E1600531A_01)
+#dat<-dat %>%
+#          filter(SubjectID!=c("E1600521B_01", "E1600531A_01"))
+
+#write.csv(dat,'/Users/meaghan/Projects/BrainAge/data/elgan_brainAGE_data_20250314.csv', row.names = FALSE)
+
+#PING
+dat<- read.csv('/Users/meaghan/Projects/BrainAge/results/ping_brainAGE_Global_outputs/ping_FS6_brainAGE_outputs_20250326.csv')
+
 
 
 
@@ -32,34 +41,34 @@ library(patchwork)
 plot.age<- ggplot(aes(sex, age), data=dat) +
       geom_violin(aes(colour = sex, fill=sex, alpha=.5)) +
       geom_point() + 
-      scale_y_continuous(limits=c(13,25), breaks=seq(13,25,2)) +
+      scale_y_continuous(limits=c(4,25)) +
       theme_classic()
 
 plot.pred_age<-ggplot(aes(sex, predicted_age), data=dat) +
       geom_violin(aes(colour = sex, fill=sex, alpha=.5)) +
       geom_point() + 
-      scale_y_continuous(limits=c(13,25), breaks=seq(13,25,2)) +
+      scale_y_continuous(limits=c(4,25)) +
       theme_classic()
 
 
 plot.pred_ageadj<-ggplot(aes(sex, predicted_age_adj), data=dat) +
       geom_violin(aes(colour = sex, fill=sex, alpha=.5)) +
       geom_point() + 
-      scale_y_continuous(limits=c(13,25), breaks=seq(13,25,2)) +
+      scale_y_continuous(limits=c(4,25)) +
       theme_classic()
 
 
 plot.brainage<-ggplot(aes(sex, brainage_dif), data=dat) +
       geom_violin(aes(colour = sex, fill=sex, alpha=.5)) +
       geom_point() + 
-      scale_y_continuous(limits=c(-2, 10), breaks=seq(-2,10,2)) +
+      scale_y_continuous(limits=c(-7, 11), breaks=seq(-7,11,2)) +
       theme_classic()
 
 
 plot.brainageadj<-ggplot(aes(sex, brainage_dif_adj), data=dat) +
       geom_violin(aes(colour = sex, fill=sex, alpha=.5)) +
       geom_point() + 
-      scale_y_continuous(limits=c(-2, 10), breaks=seq(-2,10,2)) +
+      scale_y_continuous(limits=c(-7, 11), breaks=seq(-7,11,2)) +
       theme_classic()
 
 
@@ -70,7 +79,7 @@ summarise_at(dat, vars(brainage_dif, brainage_dif_adj), list(mean = mean, sd = s
 
 dat %>%
   group_by(sex) %>%
-  summarise_at(vars(brainage_dif, brainage_dif_adj), list(mean = mean, sd = sd))
+  summarise_at(vars(age, brainage_dif, brainage_dif_adj), list(mean = mean, sd = sd))
 
 
 ```
@@ -80,23 +89,23 @@ dat %>%
 library(patchwork)
 
 # Chronological age
-plot.age_predage<-ggplot(aes(age, predicted_age), data=dat) + 
+plot.age_predage<-ggplot(aes(age, predicted_age_adj), data=dat) + 
                       geom_point(aes(color=sex)) +
                       geom_smooth(method=lm, se=FALSE, size=.5, aes(color=sex)) +
                       geom_smooth(method=lm, se=FALSE, color="black") +
-                      scale_x_continuous(limits=c(14.5,16.5), breaks=seq(14.5,17.5,.5)) +
-                      scale_y_continuous(limits=c(13,25), breaks=seq(13,25,2)) +
+                      scale_x_continuous(limits=c(4, 25), breaks=seq(4, 25,5)) +
+                      scale_y_continuous(limits=c(4,25)) +
                       xlab("Chronological Age (y)") +
                       ylab("Predicted Age (y)") +
                       theme_classic()
 
 
-plot.age_brainagedif<-ggplot(aes(age, brainage_dif), data=dat) + 
+plot.age_brainagedif<-ggplot(aes(age, brainage_dif_adj), data=dat) + 
                       geom_point(aes(color=sex)) +
                       geom_smooth(method=lm, se=FALSE, size=.5, aes(color=sex)) +
                       geom_smooth(method=lm, se=FALSE, color="black") +
-                      scale_x_continuous(limits=c(14.5,16.5), breaks=seq(14.5,17.5,.5)) +
-                      scale_y_continuous(limits=c(-2, 10), breaks=seq(-2,10,2)) +
+                      scale_x_continuous(limits=c(4, 25), breaks=seq(4, 25,5)) +
+                      scale_y_continuous(limits=c(-7, 11), breaks=seq(-7,11,2)) +
                       xlab("Chronological Age (y)") +
                       ylab("Brain Age Difference (y)") +
                       theme_classic()

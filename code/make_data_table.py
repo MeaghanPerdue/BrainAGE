@@ -1,17 +1,21 @@
+# Prepare data for BrainAGE estimation via Global Brain-AGE model: <https://centilebrain.org/#/brainAge_global> 
 # merge aparc and aseg outputs formatted for brainAGE template
 # males and females must be run separately
+# aparc and aseg files must contain SubjectID column that matches brainAGE participant info files (may need to edit if Freesurfer folders are named differently)
+# update read and write paths as needed for current dataset
+# check output and save in .xlsx folder for upload to BrainAGE estimator
 import pandas as pd
 
 #read participant info (rows 1:6 in brainAGE template)
-males=pd.read_csv('/Users/meaghan/Projects/BrainAge/data/brainAGE_ping_males.csv')
-females=pd.read_csv('/Users/meaghan/Projects/BrainAge/data/brainAGE_ping_females.csv')
+males=pd.read_csv('/Users/meaghan/Projects/BrainAge/data/ping_brainAGE_Global_inputs/brainAGE_ping_males.csv')
+females=pd.read_csv('/Users/meaghan/Projects/BrainAge/data/ping_brainAGE_Global_inputs/brainAGE_ping_females.csv')
 
 #read aparc and aseg table outputs from freesurfer
-lhthickness=pd.read_csv('/Users/meaghan/Projects/BrainAge/data/lh_aparc_stats_thickness.csv')
-rhthickness=pd.read_csv('/Users/meaghan/Projects/BrainAge/data/rh_aparc_stats_thickness.csv')
-lharea=pd.read_csv('/Users/meaghan/Projects/BrainAge/data/lh_aparc_stats_area.csv')
-rharea=pd.read_csv('/Users/meaghan/Projects/BrainAge/data/rh_aparc_stats_area.csv')
-volume=pd.read_csv('/Users/meaghan/Projects/BrainAge/data/aseg_stats_vol.csv')
+lhthickness=pd.read_csv('/Users/meaghan/Projects/BrainAge/data/ping_aparc_aseg_out_FS6/lh_aparc_stats_thickness.csv')
+rhthickness=pd.read_csv('/Users/meaghan/Projects/BrainAge/data/ping_aparc_aseg_out_FS6/rh_aparc_stats_thickness.csv')
+lharea=pd.read_csv('/Users/meaghan/Projects/BrainAge/data/ping_aparc_aseg_out_FS6/lh_aparc_stats_area.csv')
+rharea=pd.read_csv('/Users/meaghan/Projects/BrainAge/data/ping_aparc_aseg_out_FS6/rh_aparc_stats_area.csv')
+volume=pd.read_csv('/Users/meaghan/Projects/BrainAge/data/ping_aparc_aseg_out_FS6/aseg_stats_vol.csv')
 
 # rename first column in each sheet to study_id 
 lhthickness = lhthickness.rename(columns={lhthickness.columns[0]: 'SubjectID'})
@@ -43,5 +47,5 @@ malesdat.columns=cols2
 femalesdat.columns=cols2
 
 # write outputs to csv
-malesdat.to_csv('/Users/meaghan/Projects/BrainAge/data/brainAGE_ping_males_data.csv', index=False)
-femalesdat.to_csv('/Users/meaghan/Projects/BrainAge/data/brainAGE_ping_females_data.csv', index=False)
+malesdat.to_csv('/Users/meaghan/Projects/BrainAge/data/ping_brainAGE_Global_inputs/brainAGE_ping_males_data_FS6.csv', index=False)
+femalesdat.to_csv('/Users/meaghan/Projects/BrainAge/data/ping_brainAGE_Global_inputs/brainAGE_ping_females_data_FS6.csv', index=False)
